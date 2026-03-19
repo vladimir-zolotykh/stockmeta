@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
+import pytest
 
 
 class BoundedInt:
@@ -29,15 +30,21 @@ class Player:
     score = BoundedInt()
 
 
-if __name__ == "__main__":
+def test_BoundedInt():
     player = Player()
-    try:
-        player.score = -3
-    except ValueError as e:
-        assert str(e) == "-3 must be in [0, 100("
+    val = -3
+    with pytest.raises(ValueError) as exc:
+        player.score = val
+    assert str(exc.value) == f"{val} must be in [0, 100("
     player.score = 10
-    print(f"{player.score = }")
-    try:
-        player.score = 123
-    except ValueError as e:
-        assert str(e) == "123 must be in [0, 100("
+    assert player.score == 10
+    val = 123
+    with pytest.raises(ValueError) as exc:
+        player.score = val
+    assert str(exc.value) == f"{val} must be in [0, 100("
+
+
+if __name__ == "__main__":
+    import sys
+
+    pytest.main(sys.argv)
