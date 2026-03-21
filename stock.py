@@ -4,7 +4,9 @@
 
 
 class Descriptor:
-    def __init__(self):
+    def __init__(self, **opt):
+        for key, val in opt.items():
+            setattr(self, key, val)
         self._name = None
 
     def __set_name__(self, owner, name):
@@ -20,56 +22,58 @@ class Descriptor:
 
 
 class Typed(Descriptor):
-    _required_type = type(None)
+    _type = type(None)
 
-    def __set__(self, instance, val):
-        if not isinstance(val, self._required_type):
-            raise TypeError()
-        super().__set__(instance, val)
-
-
-class Bounded(Descriptor):
-    def __init__(self, min_val=0, max_val=None):
-        self.min_val = min_val
-        self.max_val = max_val
-
-    def __set__(self, instance, val):
-        if not (val >= self.min_val and val <= self.max_val):
-            raise ValueError()
+    def __set__(self, instance, value):
+        if not isinstance(instance, self._type):
+            raise TypeError(f"{type(value)}: expected {self._type}")
+        super().__set__(instance, value)
 
 
 class Integer(Typed):
-    _required_type = int
-
-
-class Unsigned(Bounded):
-    def __init__(self):
-        super().__init__(0, None)
+    _type = int
 
 
 class Float(Typed):
-    _required_type = float
-
-
-class UnsignedInteger(Integer, Unsigned):
-    pass
-
-
-class UnsignedFloat(Float, Unsigned):
-    pass
+    _type = float
 
 
 class String(Typed):
-    _required_type = str
+    _type = str
 
 
-class SizedString(String, Bounded):
-    def __init__(self, min_len: int, max_len: int):
-        super(String, self).__init__(min_len, max_len)
+class UnsignedInteger(Integer):
+    def __set__(self, instance, value):
+        if value < 0:
+            raise ValueError(f"{value}: must be non negative")
+        super().__set__(instance, value)
+
+
+class UnsignedFloat(Float):
+    def __set__(self, instance, value):
+        if value < 0:
+            raise ValueError(f"{value}: must be non negative")
+        super().__set__(instance, value)
+
+
+class SizedString(String):
+    def __init__(self, **opt):
+        if "min_len" not in opt:
+            opt["min_len"] = 0
+        if "max_len" not in opt:
+            raise ValueError("max_len is missing")
+        super().__init__(**opt)
+
+    def __set__(self, instance, value):
+        if len(value) < self.min_len or len(value) > self.max_len:
+            raise ValueError(
+                f"{value}: length must be in range [{self.min_len}..{self.max_len}]"
+            )
+        super().__set__(instance, value)
 
 
 class Stock:
-    name = SizedString(8)
+    name = SizedString(size=12)
     shares = UnsignedInteger()
     price = UnsignedFloat()
 
@@ -79,7 +83,6 @@ class Stock:
         self.price = price
 
 
-if __name__ == "__main__":
+def test_stock():
     s = Stock("ACME", 50, 91.1)
-    s.shares = 97
-    s.shares = -10
+    assert s.shares == 50
