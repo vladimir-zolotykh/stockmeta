@@ -25,7 +25,7 @@ class Typed(Descriptor):
     _type = type(None)
 
     def __set__(self, instance, value):
-        if not isinstance(instance, self._type):
+        if not isinstance(value, self._type):
             raise TypeError(f"{type(value)}: expected {self._type}")
         super().__set__(instance, value)
 
@@ -73,7 +73,7 @@ class SizedString(String):
 
 
 class Stock:
-    name = SizedString(size=12)
+    name = SizedString(max_len=12)
     shares = UnsignedInteger()
     price = UnsignedFloat()
 
