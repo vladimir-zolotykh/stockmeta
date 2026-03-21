@@ -33,3 +33,9 @@ def test_UnsignedInteger():
     p = Person()
     p.age = 35
     assert p.age == 35
+    with pytest.raises(TypeError) as exc:
+        p.age = (s := "old")
+    assert str(exc.value) == f"{s}: must be of type int"
+    with pytest.raises(ValueError) as exc:
+        p.age = (x := -3)
+    assert str(exc.value) == f"{x}: must be non negative"
