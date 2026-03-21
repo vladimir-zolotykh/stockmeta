@@ -92,3 +92,11 @@ def test_stock():
     with pytest.raises(ValueError) as exc:
         s.shares = (x := -10)
     assert str(exc.value) == f"{x}: must be non negative"
+    s.name = "ABRA"
+    assert s.name == "ABRA"
+    with pytest.raises(ValueError) as exc:
+        s.name = (t := "ABRACADABRAABRACAD")
+    assert str(exc.value) == f"{t}: length must be in range [0..12]"
+    # with pytest.raises(TypeError) as exc:
+    #     s.shares = "too much"
+    # assert str(exc.value) == "foo"
