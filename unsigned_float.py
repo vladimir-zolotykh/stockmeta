@@ -33,6 +33,6 @@ def test_UnsignedFloat():
     circle.radius = 10.2
     assert circle.radius == 10.2
     x = -3.0
-    with pytest.raises(TypeError) as exc:
+    with pytest.raises(ValueError) as exc:
         circle.radius = x
     assert str(exc.value) == f"{x}: must be 0.0 or positive"
