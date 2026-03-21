@@ -11,17 +11,17 @@ class UnsignedInteger:
     def __set_name__(self, owner, name):
         self._name = name
 
-    def _get__(self, instance, owner=None):
+    def __get__(self, instance, owner=None):
         if instance is None:
             return self
         return instance.__dict__[self._name]
 
     def __set__(self, instance, value):
-        if not instance(value, int):
+        if not isinstance(value, int):
             raise TypeError(f"{value}: must be of type int")
         if value < 0:
-            raise ValueError(f"{value}: must be positive")
-        instance.__dict__[self._name] == value
+            raise ValueError(f"{value}: must be non negative")
+        instance.__dict__[self._name] = value
 
 
 class Person:
