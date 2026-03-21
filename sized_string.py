@@ -43,4 +43,7 @@ def test_SizedString():
     s = "ABRACADABRA"
     with pytest.raises(ValueError) as exc:
         item.name = s
-    assert str(exc.value) == f"{s}: length must be in range [1..8]"
+    # assert str(exc.value) == f"{s}: length must be in range [1..8]"
+    assert str(exc.value) == "{}: length must be in range [{}..{}]".format(
+        s, Product.name.min_len, Product.name.max_len
+    )
