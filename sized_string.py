@@ -28,19 +28,19 @@ class SizedString:
         instance.__dict__[self._name] = val
 
 
-class Stock:
-    label = SizedString(1, 8)
+class Product:
+    name = SizedString(1, 8)
 
 
 def test_SizedString():
-    stock = Stock()
-    stock.label = "Hello"
-    assert stock.label == "Hello"
+    item = Product()
+    item.name = "Widget"
+    assert item.name == "Widget"
     x = 10
     with pytest.raises(TypeError) as exc:
-        stock.label = x
+        item.name = x
     assert str(exc.value) == f"{x!r} must be str"
     s = "ABRACADABRA"
     with pytest.raises(ValueError) as exc:
-        stock.label = s
+        item.name = s
     assert str(exc.value) == f"{s}: length must be in range [1..8]"
