@@ -86,3 +86,5 @@ class Stock:
 def test_stock():
     s = Stock("ACME", 50, 91.1)
     assert s.shares == 50
+    assert s.name == "ACME"
+    assert s.price == 91.1
