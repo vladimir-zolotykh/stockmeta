@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
+import pytest
 
 
 class Descriptor:
@@ -88,3 +89,6 @@ def test_stock():
     assert s.shares == 50
     assert s.name == "ACME"
     assert s.price == 91.1
+    with pytest.raises(ValueError) as exc:
+        s.shares = (x := -10)
+    assert str(exc.value) == f"{x}: must be non negative"
