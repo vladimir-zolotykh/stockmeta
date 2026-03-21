@@ -23,7 +23,7 @@ class SizedString:
             raise TypeError(f"{val} must be str")
         if len(val) < self.min_len or len(val) > self.max_len:
             raise ValueError(
-                f"{val}: length must be in range [{self.min_len} .. {self.max_len}]"
+                f"{val}: length must be in range [{self.min_len}..{self.max_len}]"
             )
         instance.__dict__[self._name] = val
 
@@ -40,3 +40,7 @@ def test_SizedString():
     with pytest.raises(TypeError) as exc:
         stock.label = x
     assert str(exc.value) == f"{x!r} must be str"
+    s = "ABRACADABRA"
+    with pytest.raises(ValueError) as exc:
+        stock.label = s
+    assert str(exc.value) == f"{s}: length must be in range [1..8]"
