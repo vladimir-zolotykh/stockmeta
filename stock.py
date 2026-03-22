@@ -71,6 +71,21 @@ class Sized(Descriptor):
         super().validate(instance, value)
 
 
+class Bounded(Descriptor):
+    def validate(self, instance, value):
+        if value < self.min_val or value > self.max_val:
+            raise ValueError(
+                f"{value}: value must be in range [{self.min_val}..{self.max_val}]"
+            )
+        super().validate(instance, value)
+
+
+class Percentage(Integer, Bounded):
+    def __init__(self):
+        opt = {"min_val": 0, "max_val": 100}
+        super().__init__(**opt)
+
+
 class SizedString(String, Sized):
     def __init__(self, **opt):
         if "min_len" not in opt:
@@ -84,16 +99,18 @@ class Stock:
     name = SizedString(max_len=12)
     shares = UnsignedInteger()
     price = UnsignedFloat()
+    discount = Percentage()
 
-    def __init__(self, name, shares, price):
+    def __init__(self, name, shares, price, discount):
         self.name = name
         self.shares = shares
         self.price = price
+        self.discount = discount
 
 
 @pytest.fixture
 def stock():
-    return Stock("ACME", 50, 91.1)
+    return Stock("ACME", 50, 91.1, 75)
 
 
 def test_stock_10(stock):
@@ -128,3 +145,14 @@ def test_stock_50(stock):
     with pytest.raises(TypeError) as exc:
         s.shares = (t := "too much")
     assert str(exc.value) == f"{t}: expected <class 'int'>"
+
+
+def test_stock_60(stock):
+    s = stock
+    assert s.discount == 75
+    with pytest.raises(TypeError) as exc:
+        s.discount = (x := 5.3)
+    assert str(exc.value) == f"{x}: expected <class 'int'>"
+    with pytest.raises(ValueError) as exc:
+        s.discount = (x := 101)
+    assert str(exc.value) == f"{x}: value must be in range [0..100]"
