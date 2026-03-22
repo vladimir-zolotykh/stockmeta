@@ -1,5 +1,6 @@
 .emacs.desktop*
 SOW/
+example.py
 # Django specific
 *.log
 *.pot

@@ -27,7 +27,7 @@ class Typed(Descriptor):
 
     def __set__(self, instance, value):
         if not isinstance(value, self._type):
-            raise TypeError(f"{type(value)}: expected {self._type}")
+            raise TypeError(f"{value}: expected {self._type}")
         super().__set__(instance, value)
 
 
@@ -97,6 +97,6 @@ def test_stock():
     with pytest.raises(ValueError) as exc:
         s.name = (t := "ABRACADABRAABRACAD")
     assert str(exc.value) == f"{t}: length must be in range [0..12]"
-    # with pytest.raises(TypeError) as exc:
-    #     s.shares = "too much"
-    # assert str(exc.value) == "foo"
+    with pytest.raises(TypeError) as exc:
+        s.shares = (t := "too much")
+    assert str(exc.value) == f"{t}: "
