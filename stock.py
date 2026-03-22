@@ -91,8 +91,26 @@ class Stock:
         self.price = price
 
 
-def test_stock():
-    s = Stock("ACME", 50, 91.1)
+@pytest.fixture
+def stock():
+    return Stock("ACME", 50, 91.1)
+
+
+def test_stock_10(stock):
+    s = stock
     assert s.shares == 50
     assert s.name == "ACME"
     assert s.price == 91.1
+
+
+def test_stock_20(stock):
+    s = stock
+    with pytest.raises(ValueError) as exc:
+        s.shares = (x := -10)
+    assert str(exc.value) == f"{x}: must be non negative"
+
+
+def test_stock_30(stock):
+    s = stock
+    s.name = "ABRA"
+    assert s.name == "ABRA"
