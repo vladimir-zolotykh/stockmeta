@@ -137,7 +137,9 @@ def test_stock_40(stock):
     s = stock
     with pytest.raises(ValueError) as exc:
         s.name = (t := "ABRACADABRAABRACAD")
-    assert str(exc.value) == f"{t}: value must be in range [0..12]"
+    _min_len = s.__class__.name.min_len
+    _max_len = s.__class__.name.max_len
+    assert str(exc.value) == f"{t}: value must be in range [{_min_len}..{_max_len}]"
 
 
 def test_stock_50(stock):
@@ -155,4 +157,6 @@ def test_stock_60(stock):
     assert str(exc.value) == f"{x}: expected <class 'int'>"
     with pytest.raises(ValueError) as exc:
         s.discount = (x := 101)
-    assert str(exc.value) == f"{x}: value must be in range [0..100]"
+    _min_val = s.__class__.discount.min_val
+    _max_val = s.__class__.discount.max_val
+    assert str(exc.value) == f"{x}: value must be in range [{_min_val}..{_max_val}]"
