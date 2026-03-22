@@ -62,7 +62,7 @@ class UnsignedFloat(Float, Unsigned):
     pass
 
 
-class Bounded(Descriptor):
+class Sized(Descriptor):
     def validate(self, instance, value):
         if len(value) < self.min_len or len(value) > self.max_len:
             raise ValueError(
@@ -71,7 +71,7 @@ class Bounded(Descriptor):
         super().validate(instance, value)
 
 
-class SizedString(String, Bounded):
+class SizedString(String, Sized):
     def __init__(self, **opt):
         if "min_len" not in opt:
             opt["min_len"] = 0
