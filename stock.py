@@ -114,3 +114,17 @@ def test_stock_30(stock):
     s = stock
     s.name = "ABRA"
     assert s.name == "ABRA"
+
+
+def test_stock_40(stock):
+    s = stock
+    with pytest.raises(ValueError) as exc:
+        s.name = (t := "ABRACADABRAABRACAD")
+    assert str(exc.value) == f"{t}: value must be in range [0..12]"
+
+
+def test_stock_50(stock):
+    s = stock
+    with pytest.raises(TypeError) as exc:
+        s.shares = (t := "too much")
+    assert str(exc.value) == f"{t}: expected <class 'int'>"
