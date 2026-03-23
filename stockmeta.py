@@ -46,10 +46,19 @@ class Stock(metaclass=StockMeta):
         self.discount = discount
 
 
-def test_run_StockMeta():
-    stock = Stock("ACME", 50, 91.1, 75)
+@pytest.fixture
+def stock():
+    return Stock("ACME", 50, 91.1, 75)
+
+
+def test_run_StockMeta(stock):
+    assert stock.shares == 50
+    assert stock.name == "ACME"
+    assert stock.price == 91.1
+    assert stock.discount == 75
 
 
 if __name__ == "__main__":
-    stock = Stock("ACME", 50, 91.1, 75)
-    logger.info(f"{stock._fields = }")
+    import sys
+
+    pytest.main(sys.argv)
