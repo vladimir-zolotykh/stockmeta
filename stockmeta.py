@@ -32,7 +32,7 @@ class StockMeta(type):
 
 
 class Stock(metaclass=StockMeta):
-    name: SizedString = {"min_len": 0, "max_len": 12}
+    name: SizedString = {"max_len": 12}
     shares: UnsignedInteger
     price: UnsignedFloat
     discount: Percentage
