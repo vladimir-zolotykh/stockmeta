@@ -26,15 +26,13 @@ class StockMeta(type):
             default = clsdict[attr] if attr in clsdict else MISSING
             fields[attr] = {"type": _type, "default": default}
             if issubclass(_type, Descriptor):
-                clsdict[attr] = (
-                    _type() if default is MISSING else _type(max_len=default)
-                )
+                clsdict[attr] = _type() if default is MISSING else _type(**default)
         clsdict["_fields"] = fields
         return super().__new__(mcls, clsname, bases, clsdict)
 
 
 class Stock(metaclass=StockMeta):
-    name: SizedString = 12
+    name: SizedString = {"min_len": 0, "max_len": 12}
     shares: UnsignedInteger
     price: UnsignedFloat
     discount: Percentage
