@@ -4,7 +4,7 @@
 import pytest
 import os
 import logging
-from stock import SizedString, UnsignedInteger, UnsignedFloat, Percentage
+from stock import Descriptor, SizedString, UnsignedInteger, UnsignedFloat, Percentage
 
 logging.basicConfig(
     filename=f".{os.path.splitext(os.path.basename(__file__))[0]}.log",
@@ -24,7 +24,11 @@ class StockMeta(type):
         fields = {}
         for attr, _type in annotations.items():
             default = clsdict[attr] if attr in clsdict else MISSING
-            fields[attr] = {_type, default}
+            fields[attr] = {"type": _type, "default": default}
+            if issubclass(_type, Descriptor):
+                clsdict[attr] = (
+                    _type() if default is MISSING else _type(max_len=default)
+                )
         clsdict["_fields"] = fields
         return super().__new__(mcls, clsname, bases, clsdict)
 
@@ -48,4 +52,4 @@ def test_run_StockMeta():
 
 if __name__ == "__main__":
     stock = Stock("ACME", 50, 91.1, 75)
-    # print(stock._fields)
+    logger.info(f"{stock._fields = }")
