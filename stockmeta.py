@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# PYTHON_ARGCOMPLETE_OK
+import pytest
+import os
+import logging
+from stock import SizedString, UnsignedInteger, UnsignedFloat, Percentage
+
+logging.basicConfig(
+    filename=f".{os.path.splitext(os.path.basename(__file__))[0]}.log",
+    filemode="w",
+    format="%(asctime)s %(message)s",
+    datefmt="%H:%M:%S",
+    level=logging.DEBUG,
+)
+logger = logging.getLogger(name=__name__)
+
+
+class StockMeta(type):
+    def __new__(mcls, clsname, bases, clsdict):
+        logger.info(f"{mcls = }, {clsname = }, {clsdict = }")
+        annotations = clsdict.get("__annotations__", {})
+        MISSING = object()
+        fields = {}
+        for attr, _type in annotations.items():
+            default = clsdict[attr] if attr in clsdict else MISSING
+            fields[attr] = {_type, default}
+        clsdict["_fields"] = fields
+        return super().__new__(mcls, clsname, bases, clsdict)
+
+
+class Stock(metaclass=StockMeta):
+    name: SizedString = 12
+    shares: UnsignedInteger
+    price: UnsignedFloat
+    discount: Percentage
+
+    def __init__(self, name, shares, price, discount):
+        self.name = name
+        self.shares = shares
+        self.price = price
+        self.discount = discount
+
+
+def test_run_StockMeta():
+    stock = Stock("ACME", 50, 91.1, 75)
+
+
+if __name__ == "__main__":
+    stock = Stock("ACME", 50, 91.1, 75)
+    # print(stock._fields)
