@@ -19,7 +19,7 @@ class Descriptor:
         instance.__dict__[self._name] = value
 
 
-def TypedDeco():
+class TypedDeco:
     def __init__(self, expected_type=None):
         self._expected_type = expected_type
 
@@ -44,9 +44,9 @@ class Stock:
     shares = Integer()
 
     def __init__(self, shares):
-        self.shares = 50
+        self.shares = shares
 
 
 if __name__ == "__main__":
-    stock = Stock()
+    stock = Stock(50)
     print(stock.shares)
