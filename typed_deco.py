@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
+import pytest
 
 
 class Descriptor:
@@ -47,6 +48,16 @@ class Stock:
         self.shares = shares
 
 
+@pytest.fixture
+def stock():
+    return Stock(50)
+
+
+def test_shares_10(stock):
+    assert stock.shares == 50
+
+
 if __name__ == "__main__":
-    stock = Stock(50)
-    print(stock.shares)
+    import sys
+
+    pytest.main(sys.argv)
