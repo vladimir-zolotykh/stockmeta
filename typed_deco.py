@@ -24,7 +24,7 @@ class TypedDeco:
     def __init__(self, expected_type=None):
         self._expected_type = expected_type
 
-    def __call__(self, cls):
+    def __call__(self, cls):  # change ``self'' to ``cls''
         super_set = cls.__set__
 
         def __set__(descriptor, instance, value):
@@ -41,16 +41,23 @@ class Integer(Descriptor):
     pass
 
 
+@TypedDeco(float)
+class Float(Descriptor):
+    pass
+
+
 class Stock:
     shares = Integer()
+    price = Float()
 
-    def __init__(self, shares):
+    def __init__(self, shares, price):
         self.shares = shares
+        self.price = price
 
 
 @pytest.fixture
 def stock():
-    return Stock(50)
+    return Stock(50, 91.1)
 
 
 def test_shares_10(stock):
@@ -58,6 +65,13 @@ def test_shares_10(stock):
     with pytest.raises(TypeError) as exc:
         stock.shares = (x := 90.1)
     assert str(exc.value) == f"{x} must be of type <class 'int'>"
+
+
+def test_shares_20(stock):
+    assert stock.price == 91.1
+    with pytest.raises(TypeError) as exc:
+        stock.price = (x := "too expensive")
+    assert str(exc.value) == f"{x} must be of type <class 'float'>"
 
 
 if __name__ == "__main__":
