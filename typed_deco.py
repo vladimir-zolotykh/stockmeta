@@ -55,6 +55,9 @@ def stock():
 
 def test_shares_10(stock):
     assert stock.shares == 50
+    with pytest.raises(TypeError) as exc:
+        stock.shares = (x := 90.1)
+    assert str(exc.value) == f"{x} must be of type <class 'int'>"
 
 
 if __name__ == "__main__":
