@@ -36,6 +36,18 @@ class TypedDeco:
         return cls
 
 
+def Unsigned(cls):
+    super_set = cls.__set__
+
+    def __set__(self, instance, value):
+        if value < 0:
+            raise ValueError(f"{value} must be positive")
+        super_set(self, instance, value)
+
+    cls.__set__ = __set__
+    return cls
+
+
 @TypedDeco(int)
 class Integer(Descriptor):
     pass
@@ -46,9 +58,16 @@ class Float(Descriptor):
     pass
 
 
+@TypedDeco(float)
+@Unsigned
+class UnsignedFloat(Descriptor):
+    pass
+
+
 class Stock:
     shares = Integer()
     price = Float()
+    price = UnsignedFloat()
 
     def __init__(self, shares, price):
         self.shares = shares
@@ -60,18 +79,21 @@ def stock():
     return Stock(50, 91.1)
 
 
-def test_shares_10(stock):
+def test_shares_10_Integer(stock):
     assert stock.shares == 50
     with pytest.raises(TypeError) as exc:
         stock.shares = (x := 90.1)
     assert str(exc.value) == f"{x} must be of type <class 'int'>"
 
 
-def test_shares_20(stock):
+def test_shares_20_Float(stock):
     assert stock.price == 91.1
     with pytest.raises(TypeError) as exc:
         stock.price = (x := "too expensive")
     assert str(exc.value) == f"{x} must be of type <class 'float'>"
+    with pytest.raises(ValueError) as exc:
+        stock.price = (x := -10.3)
+    assert str(exc.value) == f"{x} must be positive"
 
 
 if __name__ == "__main__":
