@@ -26,10 +26,10 @@ class TypedDeco:
     def __call__(self, cls):
         super_set = cls.__set__
 
-        def __set__(self, instance, value):
+        def __set__(descriptor, instance, value):
             if not isinstance(value, self._expected_type):
                 raise TypeError(f"{value} must be of type {self._expected_type}")
-            super_set(instance, value)
+            super_set(descriptor, instance, value)
 
         cls.__set__ = __set__
         return cls
