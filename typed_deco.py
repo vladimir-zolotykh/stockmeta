@@ -50,6 +50,25 @@ def Unsigned(cls):
     return cls
 
 
+def LengthBounded(cls):
+    super_init = cls.__init__
+
+    def __init__(self, size, *args, **kwargs):
+        self._size = size
+        super_init(self, *args, **kwargs)
+
+    cls.__init__ = __init__
+    super_set = cls.__set__
+
+    def __set__(self, instance, value):
+        if not (len(value) <= self._size):
+            raise ValueError(f"Lenght of {value} must not exceed {self._size}")
+        super_set(self, instance, value)
+
+    cls.__set__ = __set__
+    return cls
+
+
 @TypedDeco(int)
 class Integer(Descriptor):
     pass
@@ -67,12 +86,13 @@ class UnsignedFloat(Descriptor):
 
 
 @TypedDeco(str)
+@LengthBounded
 class SizedString(Descriptor):
     pass
 
 
 class Stock:
-    name = SizedString()
+    name = SizedString(8)
     shares = Integer()
     price = UnsignedFloat()
 
