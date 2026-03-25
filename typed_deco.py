@@ -64,19 +64,29 @@ class UnsignedFloat(Descriptor):
     pass
 
 
+@TypedDeco(str)
+class SizedString(Descriptor):
+    pass
+
+
 class Stock:
+    name = SizedString()
     shares = Integer()
-    price = Float()
     price = UnsignedFloat()
 
-    def __init__(self, shares, price):
+    def __init__(self, name, shares, price):
+        self.name = name
         self.shares = shares
         self.price = price
 
 
 @pytest.fixture
 def stock():
-    return Stock(50, 91.1)
+    return Stock("ACME", 50, 91.1)
+
+
+def test_name(stock):
+    assert stock.name == "ACME"
 
 
 def test_shares(stock):
