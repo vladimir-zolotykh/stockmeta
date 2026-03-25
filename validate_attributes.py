@@ -8,10 +8,7 @@ from stock import Descriptor, SizedString, UnsignedInteger, UnsignedFloat
 def validate_attributes(**kwargs):
     def decorate_cls(cls):
         for attr, descriptor in kwargs.items():
-            if isinstance(descriptor, Descriptor):
-                # descriptor.__set_name__(cls, attr)
-                pass
-            else:
+            if not isinstance(descriptor, Descriptor):
                 descriptor = descriptor()
             descriptor.__set_name__(cls, attr)
             setattr(cls, attr, descriptor)
