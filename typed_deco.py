@@ -87,6 +87,9 @@ def stock():
 
 def test_name(stock):
     assert stock.name == "ACME"
+    with pytest.raises(TypeError) as exc:
+        stock.name = (x := 17)
+    assert str(exc.value) == f"{x} must be of type <class 'str'>"
 
 
 def test_shares(stock):
