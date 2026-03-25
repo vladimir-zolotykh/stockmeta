@@ -29,7 +29,9 @@ class TypedDeco:
 
         def __set__(descriptor, instance, value):
             if not isinstance(value, self._expected_type):
-                raise TypeError(f"{value} must be of type {self._expected_type}")
+                raise TypeError(
+                    f"{value} must be of type {self._expected_type.__name__}"
+                )
             super_set(descriptor, instance, value)
 
         cls.__set__ = __set__
@@ -89,21 +91,21 @@ def test_name(stock):
     assert stock.name == "ACME"
     with pytest.raises(TypeError) as exc:
         stock.name = (x := 17)
-    assert str(exc.value) == f"{x} must be of type <class 'str'>"
+    assert str(exc.value) == f"{x} must be of type str"
 
 
 def test_shares(stock):
     assert stock.shares == 50
     with pytest.raises(TypeError) as exc:
         stock.shares = (x := 90.1)
-    assert str(exc.value) == f"{x} must be of type <class 'int'>"
+    assert str(exc.value) == f"{x} must be of type int"
 
 
 def test_price(stock):
     assert stock.price == 91.1
     with pytest.raises(TypeError) as exc:
         stock.price = (x := "too expensive")
-    assert str(exc.value) == f"{x} must be of type <class 'float'>"
+    assert str(exc.value) == f"{x} must be of type float"
     with pytest.raises(ValueError) as exc:
         stock.price = (x := -10.3)
     assert str(exc.value) == f"{x} must be positive"
