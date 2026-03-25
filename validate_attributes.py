@@ -63,3 +63,12 @@ def test_shares(stock):
     with pytest.raises(ValueError) as exc:
         stock.shares = (x := -3)
     assert str(exc.value) == f"{x}: must be non negative"
+
+
+def test_price(stock):
+    with pytest.raises(TypeError) as exc:
+        stock.price = (x := "too much")
+    assert str(exc.value) == f"{x}: expected <class 'float'>"
+    with pytest.raises(ValueError) as exc:
+        stock.price = (x := -73.0)
+    assert str(exc.value) == f"{x}: must be non negative"
