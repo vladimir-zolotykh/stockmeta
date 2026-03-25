@@ -62,7 +62,7 @@ def LengthBounded(cls):
 
     def __set__(self, instance, value):
         if not (len(value) <= self._size):
-            raise ValueError(f"Lenght of {value} must not exceed {self._size}")
+            raise ValueError(f"{value} must not exceed {self._size} characters")
         super_set(self, instance, value)
 
     cls.__set__ = __set__
@@ -112,6 +112,9 @@ def test_name(stock):
     with pytest.raises(TypeError) as exc:
         stock.name = (x := 17)
     assert str(exc.value) == f"{x} must be of type str"
+    with pytest.raises(ValueError) as exc:
+        stock.name = (s := "abracadabra")
+    assert str(exc.value) == f"{s} must not exceed {Stock.name._size} characters"
 
 
 def test_shares(stock):
