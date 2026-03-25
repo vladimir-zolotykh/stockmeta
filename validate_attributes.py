@@ -9,7 +9,11 @@ def validate_attributes(**kwargs):
     def decorate_cls(cls):
         for attr, descriptor in kwargs.items():
             if isinstance(descriptor, Descriptor):
-                descriptor.__set_name__(cls, attr)
+                # descriptor.__set_name__(cls, attr)
+                pass
+            else:
+                descriptor = descriptor()
+            descriptor.__set_name__(cls, attr)
             setattr(cls, attr, descriptor)
         return cls
 
@@ -53,3 +57,12 @@ def test_name(stock):
     with pytest.raises(TypeError) as exc:
         stock.name = (x := 10)
     assert str(exc.value) == f"{x}: expected <class 'str'>"
+
+
+def test_shares(stock):
+    with pytest.raises(TypeError) as exc:
+        stock.shares = (x := 10.3)
+    assert str(exc.value) == f"{x}: expected <class 'int'>"
+    with pytest.raises(ValueError) as exc:
+        stock.shares = (x := -3)
+    assert str(exc.value) == f"{x}: must be non negative"
