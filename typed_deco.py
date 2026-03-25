@@ -79,14 +79,14 @@ def stock():
     return Stock(50, 91.1)
 
 
-def test_shares_10_Integer(stock):
+def test_shares(stock):
     assert stock.shares == 50
     with pytest.raises(TypeError) as exc:
         stock.shares = (x := 90.1)
     assert str(exc.value) == f"{x} must be of type <class 'int'>"
 
 
-def test_shares_20_Float(stock):
+def test_price(stock):
     assert stock.price == 91.1
     with pytest.raises(TypeError) as exc:
         stock.price = (x := "too expensive")
