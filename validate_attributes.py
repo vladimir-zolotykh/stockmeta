@@ -41,3 +41,15 @@ def test_stock(stock):
     assert stock.name == "ACME"
     assert stock.shares == 50
     assert stock.price == 91.1
+
+
+def test_name(stock):
+    with pytest.raises(ValueError) as exc:
+        stock.name = (s := "ABRACADABRA")
+    assert (
+        str(exc.value)
+        == f"{s}: value must be in range [{Stock.name.min_len}..{Stock.name.max_len}]"
+    )
+    with pytest.raises(TypeError) as exc:
+        stock.name = (x := 10)
+    assert str(exc.value) == f"{x}: expected <class 'str'>"
