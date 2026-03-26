@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 # PYTHON_ARGCOMPLETE_OK
 import logging
-import os
-import pytest
+import sys
 
 logging.basicConfig(
-    filename=f".{os.path.splitext(os.path.basename(__file__))[0]}.log",
-    filemode="w",
+    stream=sys.stderr,
     format="%(asctime)s %(message)s",
     datefmt="%H:%M:%S",
     level=logging.DEBUG,
